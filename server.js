@@ -27,6 +27,7 @@ const io = new Server(server);
 io.adapter(createAdapter(pubClient, subClient));
 
 app.use(express.json());
+app.get("/health", (_req, res) => res.type("text/plain").send("ok"));
 app.use(express.static(path.join(__dirname, "public")));
 
 const rid = (n = 4) =>
