@@ -203,6 +203,33 @@ function render() {
     hide($("result"));
     show($("guessArea"));
   }
+
+  fitAllNumbers();
+}
+
+function fitAllNumbers() {
+  const isMobile = window.matchMedia("(max-width: 480px)").matches;
+  const big = $("avg");
+  if (big && !big.closest(".hidden") && !$("result").classList.contains("hidden")) {
+    fitText(big, isMobile ? 64 : 92, 22);
+  }
+  for (const g of document.querySelectorAll(".members .m-guess")) {
+    fitText(g, g.classList.contains("dropped") ? 22 : 28, 12);
+  }
+}
+
+window.addEventListener("resize", () => { if (latest) fitAllNumbers(); });
+
+function fitText(el, maxPx, minPx) {
+  if (!el || !el.parentElement) return;
+  el.style.fontSize = maxPx + "px";
+  const available = el.parentElement.clientWidth;
+  if (available <= 0) return;
+  let size = maxPx;
+  while (size > minPx && el.scrollWidth > available) {
+    size -= 2;
+    el.style.fontSize = size + "px";
+  }
 }
 
 function escapeHtml(s) {
