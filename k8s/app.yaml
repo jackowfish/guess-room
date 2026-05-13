@@ -24,7 +24,7 @@ spec:
         - name: ghcr-pull
       containers:
         - name: app
-          image: ghcr.io/jackowfish/guess-room:latest # {"$imagepolicy": "guess-room:app"}
+          image: ghcr.io/jackowfish/guess-room:540c3ff # {"$imagepolicy": "guess-room:app"}
           imagePullPolicy: Always
           ports:
             - name: http
