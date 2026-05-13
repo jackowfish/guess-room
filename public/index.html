@@ -19,21 +19,30 @@
   <main id="app">
     <section id="lobby" class="card">
       <h1 class="title">GUESS<span>ROOM</span></h1>
-      <p class="tagline">make a room. everyone picks a number. reveal the truth.</p>
+      <p class="tagline" id="lobbyTagline">make a room. everyone picks a number. reveal the truth.</p>
+      <p class="join-banner hidden" id="joinBanner">
+        joining room <code id="joinBannerCode"></code>
+      </p>
 
       <label class="field">
         <span>your name</span>
         <input id="name" placeholder="jack" maxlength="40" />
       </label>
 
-      <button id="create" class="btn btn-primary btn-big">create room</button>
-
-      <div class="divider"><span>or join</span></div>
-
-      <div class="row">
-        <input id="joinCode" placeholder="ROOM CODE" maxlength="6" class="code-input" />
-        <button id="join" class="btn btn-secondary">jump in</button>
+      <div id="createBlock">
+        <button id="create" class="btn btn-primary btn-big">create room</button>
+        <div class="divider"><span>or join</span></div>
+        <div class="row">
+          <input id="joinCode" placeholder="ROOM CODE" maxlength="6" class="code-input" />
+          <button id="join" class="btn btn-secondary">jump in</button>
+        </div>
       </div>
+
+      <div id="joinBlock" class="hidden">
+        <button id="joinHash" class="btn btn-primary btn-big">jump in</button>
+        <button id="backToMain" class="link back-link">← back to main</button>
+      </div>
+
       <p id="lobbyErr" class="err"></p>
     </section>
 
