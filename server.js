@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { createAdapter } from "@socket.io/redis-adapter";
 import Redis from "ioredis";
 import crypto from "crypto";
 import path from "path";
@@ -11,10 +12,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 const PORT = Number(process.env.PORT || 3000);
 
-const redis = new Redis(REDIS_URL);
+const redisOpts = { maxRetriesPerRequest: null, enableReadyCheck: true };
+const redis = new Redis(REDIS_URL, redisOpts);
+const pubClient = new Redis(REDIS_URL, redisOpts);
+const subClient = pubClient.duplicate();
+
+for (const [name, client] of [["redis", redis], ["pub", pubClient], ["sub", subClient]]) {
+  client.on("error", (err) => console.error(`[${name}] redis error:`, err.message));
+}
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+io.adapter(createAdapter(pubClient, subClient));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
