@@ -485,12 +485,15 @@ input:focus { border-color: var(--cyan); background: rgba(255, 255, 255, 0.1); }
   color: var(--yellow);
   margin-top: 4px;
   line-height: 1;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .members .m-guess.dropped {
   color: var(--muted);
   text-decoration: line-through;
   font-size: 22px;
 }
+.members li { min-width: 0; overflow: hidden; }
 .host-tag {
   background: var(--pink);
   color: #fff;
@@ -542,7 +545,10 @@ input:focus { border-color: var(--cyan); background: rgba(255, 255, 255, 0.1); }
   color: var(--yellow);
   text-shadow: 4px 4px 0 var(--pink), 8px 8px 0 var(--purple);
   animation: reveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
+.result { overflow: hidden; }
 @keyframes reveal {
   0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
   60% { transform: scale(1.15) rotate(2deg); }
