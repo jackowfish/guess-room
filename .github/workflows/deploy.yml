@@ -18,11 +18,9 @@ env:
 
 jobs:
   deploy:
-    runs-on: alcovel-beefy
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.DEPLOY_TOKEN }}
 
       - name: Set build vars
         run: echo "BUILD_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
