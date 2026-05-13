@@ -1,15 +1,14 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis
   namespace: guess-room
   labels:
     app.kubernetes.io/name: redis
 spec:
+  serviceName: redis
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: redis
@@ -24,17 +23,22 @@ spec:
         - name: redis
           image: redis:7-alpine
           args:
-            - --save
-            - ""
             - --appendonly
-            - "no"
+            - "yes"
+            - --appendfsync
+            - "everysec"
+            - --dir
+            - /data
             - --maxmemory
             - "128mb"
             - --maxmemory-policy
-            - "allkeys-lru"
+            - "noeviction"
           ports:
             - name: redis
               containerPort: 6379
+          volumeMounts:
+            - name: data
+              mountPath: /data
           livenessProbe:
             tcpSocket:
               port: 6379
@@ -50,6 +54,15 @@ spec:
               memory: 32Mi
             limits:
               memory: 160Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
