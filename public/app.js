@@ -32,13 +32,35 @@ async function createRoom() {
   enterRoom(roomId, name, { hostToken });
 }
 
-function joinRoom() {
-  const code = $("joinCode").value.trim().toUpperCase();
+function joinRoom(codeOverride) {
+  const code = (codeOverride || $("joinCode").value).trim().toUpperCase();
   const name = $("name").value.trim();
   if (!code) { $("lobbyErr").textContent = "enter a room code"; return; }
   if (!name) { $("lobbyErr").textContent = "enter your name"; return; }
   location.hash = code;
   enterRoom(code, name, {});
+}
+
+function hashCode() {
+  return location.hash.length > 1 ? location.hash.slice(1).toUpperCase() : "";
+}
+
+function applyHashMode() {
+  const code = hashCode();
+  if (code) {
+    $("createBlock").classList.add("hidden");
+    $("joinBlock").classList.remove("hidden");
+    $("lobbyTagline").classList.add("hidden");
+    $("joinBanner").classList.remove("hidden");
+    $("joinBannerCode").textContent = code;
+    $("joinCode").value = code;
+    setTimeout(() => $("name").focus(), 50);
+  } else {
+    $("createBlock").classList.remove("hidden");
+    $("joinBlock").classList.add("hidden");
+    $("lobbyTagline").classList.remove("hidden");
+    $("joinBanner").classList.add("hidden");
+  }
 }
 
 function enterRoom(roomId, name, { hostToken } = {}) {
@@ -191,7 +213,13 @@ function escapeHtml(s) {
 
 // wire up
 $("create").addEventListener("click", createRoom);
-$("join").addEventListener("click", joinRoom);
+$("join").addEventListener("click", () => joinRoom());
+$("joinHash").addEventListener("click", () => joinRoom(hashCode()));
+$("backToMain").addEventListener("click", () => {
+  history.replaceState(null, "", location.pathname);
+  applyHashMode();
+});
+window.addEventListener("hashchange", applyHashMode);
 
 let guessRaw = "";
 
@@ -324,8 +352,4 @@ $("copyLink").addEventListener("click", async () => {
   } catch {}
 });
 
-// auto-join from hash
-if (location.hash.length > 1) {
-  const code = location.hash.slice(1).toUpperCase();
-  $("joinCode").value = code;
-}
+applyHashMode();

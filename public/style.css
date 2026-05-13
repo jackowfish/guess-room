@@ -122,6 +122,28 @@ main {
   margin: 28px 0 18px;
 }
 
+.join-banner {
+  font-size: 15px;
+  color: var(--ink);
+  margin: 28px 0 18px;
+}
+.join-banner code {
+  font-family: "Lilita One", sans-serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--yellow);
+  background: transparent;
+  padding: 0 0 0 6px;
+  text-shadow: 2px 2px 0 var(--pink);
+}
+
+.back-link {
+  display: block;
+  margin: 14px auto 0;
+  color: var(--muted);
+}
+.back-link:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
+
 /* form fields */
 .field {
   display: block;
