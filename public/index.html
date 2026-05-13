@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GUESS ROOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="bg">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <main id="app">
+    <section id="lobby" class="card">
+      <h1 class="title">GUESS<span>ROOM</span></h1>
+      <p class="tagline">make a room. everyone picks a number. reveal the truth.</p>
+
+      <label class="field">
+        <span>your name</span>
+        <input id="name" placeholder="jack" maxlength="40" />
+      </label>
+
+      <button id="create" class="btn btn-primary btn-big">create room</button>
+
+      <div class="divider"><span>or join</span></div>
+
+      <div class="row">
+        <input id="joinCode" placeholder="ROOM CODE" maxlength="6" class="code-input" />
+        <button id="join" class="btn btn-secondary">jump in</button>
+      </div>
+      <p id="lobbyErr" class="err"></p>
+    </section>
+
+    <section id="room" class="card hidden">
+      <header class="room-header">
+        <div class="room-code-box">
+          <span class="label">room</span>
+          <code id="roomId">----</code>
+          <button id="copyLink" class="link">copy link</button>
+        </div>
+        <div class="right">
+          <span id="youAre" class="muted"></span>
+          <button id="settingsBtn" class="link hidden">⚙ settings</button>
+        </div>
+      </header>
+
+      <div id="settingsModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+          <div class="modal-head">
+            <h3 id="settingsTitle">host settings</h3>
+            <button class="modal-close" data-close aria-label="close">✕</button>
+          </div>
+          <label class="toggle"><input type="checkbox" id="setShowByPerson" /><span>show guesses by person on reveal</span></label>
+          <label class="toggle"><input type="checkbox" id="setDropExtremes" /><span>drop highest and lowest before averaging</span></label>
+          <label class="select-row">
+            <span>format</span>
+            <select id="setFormat">
+              <option value="number">number (1,234)</option>
+              <option value="dollars">dollars ($1,234)</option>
+              <option value="euros">euros (€1,234)</option>
+              <option value="pounds">pounds (£1,234)</option>
+              <option value="percent">percent (12.3%)</option>
+            </select>
+          </label>
+          <button class="btn btn-secondary modal-done" data-close>done</button>
+        </div>
+      </div>
+
+      <div class="state-row">
+        <span id="stateLabel" class="pill">collecting</span>
+        <span id="counts" class="counts"></span>
+      </div>
+
+      <div id="guessArea" class="guess-area">
+        <label class="field">
+          <span>your guess</span>
+          <input id="guess" type="text" inputmode="decimal" autocomplete="off" placeholder="?" class="guess-input" />
+        </label>
+        <div class="row">
+          <button id="submitBtn" class="btn btn-primary btn-big">lock it in</button>
+          <button id="unsubmitBtn" class="link">clear</button>
+        </div>
+      </div>
+
+      <ul id="members" class="members"></ul>
+
+      <div id="result" class="result hidden">
+        <div class="result-label">the average is</div>
+        <div class="big" id="avg">—</div>
+        <div class="muted" id="avgDetail"></div>
+        <ul id="byPerson" class="by-person"></ul>
+      </div>
+
+      <div class="row host-row hidden" id="hostRow">
+        <button id="revealBtn" class="btn btn-accent btn-big">reveal!</button>
+        <button id="nextBtn" class="btn btn-secondary">next round</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
