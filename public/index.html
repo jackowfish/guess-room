@@ -88,13 +88,41 @@
       </div>
 
       <div id="guessArea" class="guess-area">
-        <label class="field">
-          <span>your guess</span>
-          <input id="guess" type="text" inputmode="decimal" autocomplete="off" placeholder="?" class="guess-input" />
-        </label>
-        <div class="row">
-          <button id="submitBtn" class="btn btn-primary btn-big">lock it in</button>
-          <button id="unsubmitBtn" class="link">clear</button>
+        <div class="guess-entry">
+          <label class="field">
+            <span>your guess</span>
+            <input id="guess" type="text" inputmode="decimal" autocomplete="off" placeholder="?" class="guess-input" />
+          </label>
+          <div class="row">
+            <button id="submitBtn" class="btn btn-primary btn-big">lock it in</button>
+            <button id="unsubmitBtn" class="link">clear</button>
+          </div>
+        </div>
+
+        <div class="vault" id="vault" aria-hidden="true">
+          <div class="vault-frame">
+            <div class="vault-bolts">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="vault-door">
+              <div class="vault-dial">
+                <div class="vault-dial-ring"></div>
+                <div class="vault-dial-marks">
+                  <span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="vault-screen">
+                <div class="vault-screen-label">🔒 LOCKED</div>
+                <div class="vault-screen-value" id="lockedValue">—</div>
+              </div>
+              <div class="vault-handle"></div>
+            </div>
+          </div>
+          <div class="vault-status">your guess is sealed in the vault</div>
+          <button id="unlockBtn" class="btn btn-secondary">unlock to change</button>
         </div>
       </div>
 
