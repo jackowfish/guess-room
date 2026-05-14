@@ -70,39 +70,67 @@ function enterRoom(roomId, name, { hostToken } = {}) {
   hostToken = hostToken || saved.hostToken;
   me = { roomId, memberId: null, isHost: false, name: name || saved.name || "Anon" };
 
-  socket = io();
-  socket.emit("join", { roomId, name: me.name, memberId, hostToken }, (resp) => {
-    if (resp?.error) {
-      $("lobbyErr").textContent = resp.error;
-      socket.disconnect();
-      location.hash = "";
-      return;
-    }
-    me.memberId = resp.memberId;
-    me.isHost = !!resp.isHost;
-    store.set(roomId, {
-      memberId: resp.memberId,
-      hostToken: hostToken || saved.hostToken,
-      name: me.name,
-    });
+  // restore the last raw guess this client locked in, so the vault can show it
+  // after a reload mid-round
+  guessRaw = saved.lastGuess || "";
 
-    hide($("lobby"));
-    show($("room"));
-    $("roomId").textContent = roomId;
-    $("youAre").textContent = `you: ${me.name}${me.isHost ? " (host)" : ""}`;
-    if (me.isHost) {
-      show($("settingsBtn"));
-      show($("hostRow"));
-    }
-  });
-
+  let firstJoin = true;
   let prevState = null;
+
+  socket = io();
+
+  const doJoin = () => {
+    const s2 = store.get(roomId) || {};
+    socket.emit(
+      "join",
+      { roomId, name: me.name, memberId: me.memberId || s2.memberId, hostToken: hostToken || s2.hostToken },
+      (resp) => {
+        if (resp?.error) {
+          if (firstJoin) {
+            $("lobbyErr").textContent = resp.error;
+            socket.disconnect();
+            location.hash = "";
+          }
+          return;
+        }
+        me.memberId = resp.memberId;
+        me.isHost = !!resp.isHost;
+        store.set(roomId, {
+          ...(store.get(roomId) || {}),
+          memberId: resp.memberId,
+          hostToken: hostToken || s2.hostToken,
+          name: me.name,
+        });
+
+        if (firstJoin) {
+          firstJoin = false;
+          hide($("lobby"));
+          show($("room"));
+          $("roomId").textContent = roomId;
+          $("youAre").textContent = `you: ${me.name}${me.isHost ? " (host)" : ""}`;
+          if (me.isHost) {
+            show($("settingsBtn"));
+            show($("hostRow"));
+          }
+          if (guessRaw) repaintGuess();
+        }
+      }
+    );
+  };
+
+  // re-emit join on every (re)connect so the socket gets put back in the
+  // room and resumes receiving state broadcasts after a disconnect
+  socket.on("connect", doJoin);
+
   socket.on("state", (s) => {
     const prevFmt = latest?.settings?.format;
     latest = s;
     if (prevState === "revealed" && s.state === "collecting") {
       guessRaw = "";
       $("guess").value = "";
+      const cur = store.get(me.roomId) || {};
+      delete cur.lastGuess;
+      store.set(me.roomId, cur);
     }
     if (prevFmt && prevFmt !== s.settings.format) repaintGuess();
     prevState = s.state;
@@ -202,6 +230,15 @@ function render() {
   } else {
     hide($("result"));
     show($("guessArea"));
+  }
+
+  // vault lock state for the local user
+  const meMember = s.members.find((m) => m.id === me.memberId);
+  const locked = !!meMember?.submitted && s.state !== "revealed";
+  $("guessArea").classList.toggle("locked", locked);
+  if (locked) {
+    const display = formatGuessDisplay(guessRaw, s.settings.format) || "•••";
+    $("lockedValue").textContent = display;
   }
 
   fitAllNumbers();
@@ -321,7 +358,13 @@ $("submitBtn").addEventListener("click", () => {
   const n = Number(guessRaw);
   if (!Number.isFinite(n)) return;
   socket.emit("submit", { value: n }, (r) => {
-    if (r?.error) alert(r.error);
+    if (r?.error) { alert(r.error); return; }
+    // persist so the vault can re-display this value after a reload
+    if (me.roomId) {
+      const cur = store.get(me.roomId) || {};
+      cur.lastGuess = guessRaw;
+      store.set(me.roomId, cur);
+    }
   });
 });
 
@@ -329,6 +372,16 @@ $("unsubmitBtn").addEventListener("click", () => {
   socket.emit("unsubmit", {}, () => {});
   guessRaw = "";
   $("guess").value = "";
+  if (me.roomId) {
+    const cur = store.get(me.roomId) || {};
+    delete cur.lastGuess;
+    store.set(me.roomId, cur);
+  }
+});
+
+$("unlockBtn").addEventListener("click", () => {
+  // unsubmit but keep the typed value so the user can edit it
+  socket.emit("unsubmit", {}, () => {});
 });
 
 $("revealBtn").addEventListener("click", () => {
