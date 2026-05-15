@@ -41,6 +41,7 @@ const defaultSettings = () => ({
   showByPerson: true,
   dropExtremes: false,
   format: "number",
+  lockSubmissions: false,
 });
 
 const keys = {
@@ -177,6 +178,9 @@ io.on("connection", (socket) => {
     const r = await loadRoom(joined.roomId);
     if (!r) return ack?.({ error: "room not found" });
     if (r.state !== "collecting") return ack?.({ error: "round is revealed" });
+    if (r.settings.lockSubmissions && r.round[joined.memberId] !== undefined) {
+      return ack?.({ error: "your answer is locked for this round" });
+    }
     const n = Number(value);
     if (!Number.isFinite(n)) return ack?.({ error: "invalid number" });
     await redis.hset(keys.round(joined.roomId), joined.memberId, String(n));
@@ -189,6 +193,7 @@ io.on("connection", (socket) => {
     const r = await loadRoom(joined.roomId);
     if (!r) return ack?.({ error: "room not found" });
     if (r.state !== "collecting") return ack?.({ error: "round is revealed" });
+    if (r.settings.lockSubmissions) return ack?.({ error: "your answer is locked for this round" });
     await redis.hdel(keys.round(joined.roomId), joined.memberId);
     ack?.({ ok: true });
     broadcast(joined.roomId);
@@ -217,6 +222,7 @@ io.on("connection", (socket) => {
     const clean = {};
     if (typeof settings?.showByPerson === "boolean") clean.showByPerson = settings.showByPerson;
     if (typeof settings?.dropExtremes === "boolean") clean.dropExtremes = settings.dropExtremes;
+    if (typeof settings?.lockSubmissions === "boolean") clean.lockSubmissions = settings.lockSubmissions;
     if (allowedFormats.includes(settings?.format)) clean.format = settings.format;
     const merged = { ...r.settings, ...clean };
     await redis.hset(keys.meta(joined.roomId), "settings", JSON.stringify(merged));

@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="guess room" />
+  <meta name="theme-color" content="#2a0a4a" />
   <title>GUESS ROOM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -68,6 +72,7 @@
           </div>
           <label class="toggle"><input type="checkbox" id="setShowByPerson" /><span>show guesses by person on reveal</span></label>
           <label class="toggle"><input type="checkbox" id="setDropExtremes" /><span>drop highest and lowest before averaging</span></label>
+          <label class="toggle"><input type="checkbox" id="setLockSubmissions" /><span>prevent changing answer after locking in</span></label>
           <label class="select-row">
             <span>format</span>
             <select id="setFormat">
@@ -99,30 +104,16 @@
           </div>
         </div>
 
-        <div class="vault" id="vault" aria-hidden="true">
-          <div class="vault-frame">
-            <div class="vault-bolts">
-              <span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-            </div>
-            <div class="vault-door">
-              <div class="vault-dial">
-                <div class="vault-dial-ring"></div>
-                <div class="vault-dial-marks">
-                  <span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span>
-                </div>
-              </div>
-              <div class="vault-screen">
-                <div class="vault-screen-label">🔒 LOCKED</div>
-                <div class="vault-screen-value" id="lockedValue">—</div>
-              </div>
-              <div class="vault-handle"></div>
+        <div class="vault" aria-hidden="true">
+          <div class="vault-doors">
+            <div class="vault-door vault-door-left"></div>
+            <div class="vault-door vault-door-right"></div>
+            <div class="vault-plate">
+              <span class="vault-lock-icon" aria-hidden="true">🔒</span>
+              <span class="vault-value" id="lockedValue">—</span>
             </div>
           </div>
-          <div class="vault-status">your guess is sealed in the vault</div>
-          <button id="unlockBtn" class="btn btn-secondary">unlock to change</button>
+          <button id="unlockBtn" class="link unlock-link">unlock to change</button>
         </div>
       </div>
 
