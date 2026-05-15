@@ -564,6 +564,199 @@ input:focus { border-color: var(--cyan); background: rgba(255, 255, 255, 0.1); }
 .host-row { margin-top: 16px; }
 .host-row .btn { flex: 1; }
 
+/* vault: shown when local user has locked in their guess */
+.vault { display: none; text-align: center; margin: 8px 0 6px; }
+.guess-area.locked .guess-entry { display: none; }
+.guess-area.locked .vault { display: block; animation: vaultIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+@keyframes vaultIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.vault-frame {
+  width: 240px;
+  height: 240px;
+  margin: 8px auto 14px;
+  position: relative;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 28%, #6a6a72 0%, #3a3a44 35%, #1c1c24 65%, #0a0a12 100%);
+  box-shadow:
+    0 0 0 4px #20202a,
+    0 0 0 10px #14141c,
+    0 18px 36px rgba(0, 0, 0, 0.55),
+    inset 0 0 26px rgba(0, 0, 0, 0.6);
+}
+
+.vault-bolts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.vault-bolts span {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #d0d0d8, #6a6a72 60%, #2a2a30 100%);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), inset 0 -1px 1px rgba(0, 0, 0, 0.6);
+  left: 50%;
+  top: 50%;
+  margin: -6px 0 0 -6px;
+}
+.vault-bolts span:nth-child(1) { transform: rotate(0deg) translateY(-104px); }
+.vault-bolts span:nth-child(2) { transform: rotate(45deg) translateY(-104px); }
+.vault-bolts span:nth-child(3) { transform: rotate(90deg) translateY(-104px); }
+.vault-bolts span:nth-child(4) { transform: rotate(135deg) translateY(-104px); }
+.vault-bolts span:nth-child(5) { transform: rotate(180deg) translateY(-104px); }
+.vault-bolts span:nth-child(6) { transform: rotate(225deg) translateY(-104px); }
+.vault-bolts span:nth-child(7) { transform: rotate(270deg) translateY(-104px); }
+.vault-bolts span:nth-child(8) { transform: rotate(315deg) translateY(-104px); }
+
+.vault-door {
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, #5a5a64 0%, #2e2e38 45%, #14141c 100%);
+  box-shadow:
+    inset 0 0 22px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.04),
+    inset 0 0 0 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.vault-dial {
+  position: absolute;
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.7);
+  animation: dialSpin 0.8s cubic-bezier(0.5, 0, 0.5, 1);
+}
+.guess-area.locked .vault-dial { animation: dialSpin 0.9s cubic-bezier(0.5, 0, 0.5, 1); }
+@keyframes dialSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(540deg); }
+}
+
+.vault-dial-ring {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 210, 63, 0.18);
+}
+
+.vault-dial-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.vault-dial-marks span {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.22);
+  left: 50%;
+  top: 50%;
+  margin: -84px 0 0 -1px;
+  transform-origin: 1px 84px;
+}
+.vault-dial-marks span:nth-child(1)  { transform: rotate(0deg); }
+.vault-dial-marks span:nth-child(2)  { transform: rotate(30deg); }
+.vault-dial-marks span:nth-child(3)  { transform: rotate(60deg); }
+.vault-dial-marks span:nth-child(4)  { transform: rotate(90deg); }
+.vault-dial-marks span:nth-child(5)  { transform: rotate(120deg); }
+.vault-dial-marks span:nth-child(6)  { transform: rotate(150deg); }
+.vault-dial-marks span:nth-child(7)  { transform: rotate(180deg); }
+.vault-dial-marks span:nth-child(8)  { transform: rotate(210deg); }
+.vault-dial-marks span:nth-child(9)  { transform: rotate(240deg); }
+.vault-dial-marks span:nth-child(10) { transform: rotate(270deg); }
+.vault-dial-marks span:nth-child(11) { transform: rotate(300deg); }
+.vault-dial-marks span:nth-child(12) { transform: rotate(330deg); }
+
+.vault-screen {
+  position: relative;
+  z-index: 2;
+  min-width: 56%;
+  max-width: 72%;
+  padding: 6px 14px 8px;
+  background: rgba(0, 0, 0, 0.78);
+  border: 2px solid var(--yellow);
+  border-radius: 10px;
+  box-shadow:
+    0 0 18px rgba(255, 210, 63, 0.45),
+    inset 0 0 12px rgba(0, 0, 0, 0.8);
+  animation: screenGlow 1.8s ease-in-out infinite alternate;
+  overflow: hidden;
+}
+@keyframes screenGlow {
+  from { box-shadow: 0 0 14px rgba(255, 210, 63, 0.35), inset 0 0 10px rgba(0, 0, 0, 0.8); }
+  to   { box-shadow: 0 0 22px rgba(255, 210, 63, 0.6), inset 0 0 14px rgba(0, 0, 0, 0.8); }
+}
+
+.vault-screen-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--green);
+  font-family: "Space Grotesk", monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.vault-screen-value {
+  font-family: "Lilita One", sans-serif;
+  font-size: 30px;
+  color: var(--yellow);
+  text-shadow: 0 0 10px rgba(255, 210, 63, 0.7);
+  line-height: 1.05;
+  word-break: break-word;
+}
+
+.vault-handle {
+  position: absolute;
+  width: 14px;
+  height: 70px;
+  right: 2px;
+  top: 50%;
+  margin-top: -35px;
+  background: linear-gradient(to right, #4a4a52 0%, #8a8a92 45%, #2a2a32 100%);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.vault-status {
+  font-family: "Lilita One", sans-serif;
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 2px 0 12px;
+  text-shadow: 0 0 8px rgba(108, 242, 168, 0.35);
+}
+
+#unlockBtn { width: 100%; }
+
+@media (max-width: 480px) {
+  .vault-frame { width: 200px; height: 200px; }
+  .vault-bolts span:nth-child(1) { transform: rotate(0deg) translateY(-86px); }
+  .vault-bolts span:nth-child(2) { transform: rotate(45deg) translateY(-86px); }
+  .vault-bolts span:nth-child(3) { transform: rotate(90deg) translateY(-86px); }
+  .vault-bolts span:nth-child(4) { transform: rotate(135deg) translateY(-86px); }
+  .vault-bolts span:nth-child(5) { transform: rotate(180deg) translateY(-86px); }
+  .vault-bolts span:nth-child(6) { transform: rotate(225deg) translateY(-86px); }
+  .vault-bolts span:nth-child(7) { transform: rotate(270deg) translateY(-86px); }
+  .vault-bolts span:nth-child(8) { transform: rotate(315deg) translateY(-86px); }
+  .vault-dial-marks span { margin: -70px 0 0 -1px; transform-origin: 1px 70px; }
+  .vault-screen-value { font-size: 26px; }
+  .vault-handle { height: 56px; margin-top: -28px; }
+}
+
 @media (max-width: 480px) {
   main { padding: 18px 12px 40px; min-height: auto; justify-content: flex-start; }
   .card { padding: 22px 18px; border-radius: 18px; }
