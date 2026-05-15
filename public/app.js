@@ -176,6 +176,7 @@ function render() {
   // settings checkboxes
   $("setShowByPerson").checked = !!s.settings.showByPerson;
   $("setDropExtremes").checked = !!s.settings.dropExtremes;
+  $("setLockSubmissions").checked = !!s.settings.lockSubmissions;
   $("setFormat").value = s.settings.format || "number";
 
   // member tiles
@@ -236,6 +237,7 @@ function render() {
   const meMember = s.members.find((m) => m.id === me.memberId);
   const locked = !!meMember?.submitted && s.state !== "revealed";
   $("guessArea").classList.toggle("locked", locked);
+  $("guessArea").classList.toggle("no-unlock", locked && !!s.settings.lockSubmissions);
   if (locked) {
     const display = formatGuessDisplay(guessRaw, s.settings.format) || "•••";
     $("lockedValue").textContent = display;
@@ -381,7 +383,9 @@ $("unsubmitBtn").addEventListener("click", () => {
 
 $("unlockBtn").addEventListener("click", () => {
   // unsubmit but keep the typed value so the user can edit it
-  socket.emit("unsubmit", {}, () => {});
+  socket.emit("unsubmit", {}, (r) => {
+    if (r?.error) alert(r.error);
+  });
 });
 
 $("revealBtn").addEventListener("click", () => {
@@ -415,11 +419,12 @@ function emitSettings() {
     settings: {
       showByPerson: $("setShowByPerson").checked,
       dropExtremes: $("setDropExtremes").checked,
+      lockSubmissions: $("setLockSubmissions").checked,
       format: $("setFormat").value,
     },
   });
 }
-for (const id of ["setShowByPerson", "setDropExtremes", "setFormat"]) {
+for (const id of ["setShowByPerson", "setDropExtremes", "setLockSubmissions", "setFormat"]) {
   $(id).addEventListener("change", emitSettings);
 }
 
