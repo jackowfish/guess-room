@@ -4,47 +4,11 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - 'k8s/**'
       - 'README.md'
   workflow_dispatch: {}
 
-permissions:
-  contents: write
-  packages: write
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE: ghcr.io/jackowfish/guess-room
-
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set build vars
-        run: echo "BUILD_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ env.BUILD_SHA }}
-            ${{ env.IMAGE }}:latest
-
-      - name: Update image tag in manifest
-        run: |
-          sed -i "s|image: ghcr.io/jackowfish/guess-room:.*|image: ghcr.io/jackowfish/guess-room:${BUILD_SHA} # {\"\\\$imagepolicy\": \"guess-room:app\"}|" k8s/app.yaml
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add k8s/app.yaml
-          git diff --cached --quiet || git commit -m "deploy: update image to ${BUILD_SHA}" && git push
+  build:
+    uses: jackowfish/server-utilities/.github/workflows/build-image.yml@master
+    with:
+      image: ghcr.io/jackowfish/guess-room
