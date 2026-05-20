@@ -704,3 +704,58 @@ input:focus { border-color: var(--cyan); background: rgba(255, 255, 255, 0.1); }
 /* iOS prevents zoom on input focus when font-size >= 16px - already covered */
 input { font-size: 16px; }
 .code-input, .guess-input { font-size: max(20px, 1rem); }
+
+/* ---------- Footer signature ----------
+   Pinned to the viewport bottom so the centered .card layout isn't pushed
+   around. Pointer-events disabled on the footer itself so the gradient
+   backdrop doesn't intercept clicks, re-enabled on the credit pill so the
+   signature link stays interactive. */
+.site-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  text-align: center;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.site-footer .credit {
+  display: inline-block;
+  pointer-events: auto;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+  background: rgba(10, 4, 32, 0.55);
+  padding: 6px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.site-footer .heart {
+  color: var(--pink);
+  display: inline-block;
+  margin: 0 2px;
+  animation: heartBeat 1.6s ease-in-out infinite;
+}
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  20%      { transform: scale(1.2); }
+  40%      { transform: scale(0.95); }
+  60%      { transform: scale(1.1); }
+}
+/* Subtle dotted underline - obviously hoverable only on hover */
+.site-footer .signature {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+  padding-bottom: 1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-footer .signature:hover {
+  color: var(--ink);
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
